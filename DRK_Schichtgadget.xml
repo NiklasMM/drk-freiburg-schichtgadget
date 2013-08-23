@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+<ModulePrefs title="DRK AKRD Schichtgadget" author="Niklas Meinzer">
+<Require feature="google.calendar-0.5" />
+</ModulePrefs>
+<Content type="html"><![CDATA[
+<html>
+<body onload="initialize()">
+
+<script>
+
+// This variable holds the currently selected shifttype (0 for KTW, 1 for RTW or 2 for Baby-NAW)
+var selectedShiftType = 0;
+
+// The following arrays hold the begin and end times for all shifts
+// e.g. since K10 begins at 10 o'clock Kbegin[10] contains 1000
+// cells with no corresponding shift symbol contain -1 and yield invalid shift symbols e.g. Kbegin[0] because there is no K0
+var Kbegin = new Array(-1, 600, 615, 630, 800, 800, 830, 900, 930, 930, 1000,
+			1000, 1000, 1030, 1230, 1600, 2200, 1700);
+// Weekendshifts
+Kbegin[50] = 600;
+Kbegin[51] = 630;
+Kbegin[52] = 700;
+Kbegin[53] = 1000;
+Kbegin[55] = 1600;
+Kbegin[56] = 1700;
+Kbegin[60] = 700;
+Kbegin[61] = 1100;
+Kbegin[65] = 1600;
+Kbegin[66] = 1600;
+// RTW shifts
+Kbegin[100] = 600;
+Kbegin[101] = 630;
+Kbegin[102] = 1300;
+Kbegin[103] = 1330;
+Kbegin[104] = 2100;
+Kbegin[105] = 2130;
+Kbegin[106] = 600;
+Kbegin[107] = 630;
+Kbegin[108] = 1600;
+Kbegin[109] = 1630;
+// Außenwachen
+Kbegin[150] = 700;
+Kbegin[151] = 1800;
+Kbegin[152] = 700;
+Kbegin[153] = 1800;
+// Baby NAWDescr[200] = "YT";
+Kbegin[200] = 700;
+Kbegin[201] = 1700;
+
+
+var Kend = new Array(-1, 1400, 1445, 1500, 1400, 1700, 1700, 1700, 1800, 1900, 1600,
+		      1900, 1930, 2000, 2100, 0, 700, 100);
+Kend[50] = 1430;
+Kend[51] = 1430;
+Kend[52] = 1300;
+Kend[53] = 1930;
+Kend[55] = 100;
+Kend[56] = 200;
+Kend[60] = 1530;
+Kend[61] = 2000;
+Kend[65] = 2200;
+Kend[66] = 0;
+
+Kend[100] = 1300;
+Kend[101] = 1330;
+Kend[102] = 2100;
+Kend[103] = 2130;
+Kend[104] = 600;
+Kend[105] = 630;
+Kend[106] = 1600;
+Kend[107] = 1630;
+Kend[108] = 600;
+Kend[109] = 630;
+
+Kend[150] = 1800;
+Kend[151] = 700;
+Kend[152] = 1800;
+Kend[153] =  700;
+	      
+Kend[200] = 1700;
+Kend[201] = 700;
+
+// This Array holds the assigned car for each shift
+var Cars = new Array("", "1/85-10", "1/85-09", "1/85-11", "1/85-05", "1/85-06", "1/85-07", "1/85-14 (Zweiter Auswärts)", "1/85-17", "1/85-12", "1/85-04",
+			"1/85-13", "1/85-08 (Erster Auswärts)", "1/85-015", "1/85-16", "1/85-10", "-", "1/85-11");
+Cars[50] = "1/85-04";
+Cars[51] = "1/85-05";
+Cars[52] = "x";
+Cars[53] = "1/85-08";
+Cars[55] = "1/85-07";
+Cars[56] = "1/85-17";
+Cars[60] = "1/85-05";
+Cars[61] = "1/85-04";
+Cars[65] = "1/85-09";
+Cars[66] = "1/85-07";
+// RTW
+Cars[100] = "1/83-01";
+Cars[101] = "1/83-02";
+Cars[102] = "1/83-01";
+Cars[103] = "1/83-02";
+Cars[104] = "1/83-01";
+Cars[105] = "1/83-02";
+Cars[106] = "1/83-01";
+Cars[107] = "1/83-02";
+Cars[108] = "1/83-01";
+Cars[109] = "1/83-02";
+
+Cars[150] = "10/83-01";
+Cars[151] = "10/83-01";
+Cars[152] = "3/83-01";
+Cars[153] = "3/83-01";
+// Baby NAW
+Cars[200] = "1/81-01";
+Cars[201] = Cars[200];
+
+// This Array holds the shift descriptions
+var Descr = new Array("", "K01", "K02", "K03", "K04", "K05", "K06", "K07", "K08", "K09", "K10", "K11",
+			"K12", "K13", "K14", "K15", "K16", "K17");
+Descr[50] = "K50";
+Descr[51] = "K51";
+Descr[52] = "K52";
+Descr[53] = "K53";
+Descr[55] = "K55";
+Descr[56] = "K56";
+Descr[60] = "K60";
+Descr[61] = "K61";
+Descr[65] = "K65";
+Descr[66] = "K66";
+// RTW
+Descr[100] = "R1F";
+Descr[101] = "R2F";
+Descr[102] = "R1S";
+Descr[103] = "R2S";
+Descr[104] = "R1N";
+Descr[105] = "R2N";
+Descr[106] = "R1T";
+Descr[107] = "R2T";
+Descr[108] = "R1B";
+Descr[109] = "R2B";
+
+Descr[150] = "KiZa Tag";
+Descr[151] = "KiZa Nacht";
+Descr[152] = "Breisach Tag";
+Descr[153] = "Breisach Nacht";
+// BabyNAW
+Descr[200] = "Tag";
+Descr[201] = "Nacht";
+
+// Sets the shift to the dropdown menu depending on day and type
+function setShifts()
+{
+  var d = new Date();
+  d.setDate(document.main.day.options[document.main.day.selectedIndex].value);
+  d.setMonth(document.main.month.options[document.main.month.selectedIndex].value);
+  d.setFullYear(document.main.year.options[document.main.year.selectedIndex].value);    
+  document.main.s.options.length=0;
+  var day = d.getDay();
+  if(selectedShiftType == 0) setKTWShifts(day);
+  if(selectedShiftType == 1) setRTWShifts(day);
+  if(selectedShiftType == 2) setBNAWShifts();
+}
+// Sets Baby NAW Shifts
+function setBNAWShifts()
+{
+  var counter = 0;
+  document.main.s.options[counter++] = new Option("YT", 200);
+  document.main.s.options[counter++] = new Option("YN", 201);
+}
+// Sets the RTW shifts
+function setRTWShifts(day)
+{
+  var counter = 0;
+  
+	document.main.s.options[counter++]=new Option("R1F", 100);
+	document.main.s.options[counter++]=new Option("R2F", 101);
+	document.main.s.options[counter++]=new Option("R1S", 102);
+	document.main.s.options[counter++]=new Option("R2S", 103);
+	document.main.s.options[counter++]=new Option("R1N", 104);
+	document.main.s.options[counter++]=new Option("R2N", 105);
+  document.main.s.options[counter++]=new Option("KT", 150);
+  document.main.s.options[counter++]=new Option("KN", 151);
+  document.main.s.options[counter++]=new Option("BRT", 152);
+  document.main.s.options[counter++]=new Option("BRN", 153);
+}
+
+// Sets the KTW shifts
+function setKTWShifts(day){
+  var counter = 0;
+  // Workday Shifts
+  if((day > 0 && day < 6) && !document.main.holiday.checked)
+  {
+    for(i = 1; i < 18; i++)
+    {
+      var descr = "K";
+      if(i < 10) descr = "K0";
+      descr += i;
+      document.main.s.options[counter++]=new Option(descr, i);
+    }
+  }
+  // Saturday Shifts
+  if(day == 6)
+  { 
+    document.main.s.options[counter++]=new Option("K50", "50");
+    document.main.s.options[counter++]=new Option("K51", "51");
+    document.main.s.options[counter++]=new Option("K53", "53");
+    document.main.s.options[counter++]=new Option("K55", "55");
+    document.main.s.options[counter++]=new Option("K56", "56");
+    // Return so the Saturdays which are Holidays do not get the 6x shifts
+    return;
+  }
+  // Sunday/Holiday 
+  if(day == 0 || document.main.holiday.checked)
+  {
+    document.main.s.options[counter++]=new Option("K60", "60");
+    document.main.s.options[counter++]=new Option("K61", "61");
+    document.main.s.options[counter++]=new Option("K65", "65");
+    document.main.s.options[counter++]=new Option("K66", "66");
+  }
+}
+
+function setDays(month)
+{
+  document.main.day.options.length=0;
+  for(i=1; i <= getDays(month); i++)
+  {
+      document.main.day.options[i-1]=new Option(i, i, true, false);
+  }
+}
+
+function initialize()
+{
+  var d = new Date();
+  var year = d.getFullYear();
+  document.main.year.options.length=0;
+  
+  // makes the current and the following year selectable
+  document.main.year.options[0] = new Option(year, year);
+  document.main.year.options[1] = new Option(year+1, year+1);
+  
+  document.main.month.selectedIndex = d.getMonth();
+  setDays(d.getMonth());
+  document.main.day.selectedIndex = d.getDate()-1;
+  setShifts();
+  
+}
+
+function getDays(month)
+{
+  //TODO: LEAP YEARS
+  
+  if(month == 0) return 31;
+  if(month == 1) return 28;
+  if(month == 2) return 31;
+  if(month == 3) return 30;
+  if(month == 4) return 31;  
+  if(month == 5) return 30;  
+  if(month == 6) return 31;  
+  if(month == 7) return 31;  
+  if(month == 8) return 30;  
+  if(month == 9) return 31;  
+  if(month == 10) return 30;  
+  if(month == 11) return 31;
+}
+
+function registerShift()
+{
+    var shift = document.main.s.options[document.main.s.selectedIndex].value;
+    var sName;
+    switch(selectedShiftType)
+    {
+      case 0:
+        sName = "KTW ";
+        break;
+      case 1:
+        sName = "RTW ";
+        break;
+      case 2:
+        sName = "Baby NAW ";
+        break;
+      default:
+        break;
+    }
+    sName += Descr[shift];
+    var eventData = {
+    title: 'name',
+    details: 'default',
+
+    startTime: {year: 2009, month: 12, date: 25, hour: 15, minute: 0, second: 0},
+
+    // Within the data model, the end time is EXCLUSIVE. So the endTime MUST
+    // be on the day after the start time.
+    endTime: {year: 2009, month: 12, date: 26, hour: 14, minute: 0, second: 0},
+  };
+  eventData.title = sName;
+  
+  // Set begin and end time
+  eventData.startTime.year = document.main.year.options[document.main.year.selectedIndex].value;
+  eventData.startTime.month = document.main.month.selectedIndex + 1;
+  eventData.startTime.date = document.main.day.options[document.main.day.selectedIndex].value;
+  
+  eventData.startTime.hour = Math.floor(Kbegin[shift]/100);
+  eventData.startTime.minute = Kbegin[shift]%100;
+  
+  eventData.endTime.year = document.main.year.options[document.main.year.selectedIndex].value;
+  eventData.endTime.month = document.main.month.selectedIndex + 1;
+  eventData.endTime.date = document.main.day.options[document.main.day.selectedIndex].value;
+  // If shift ends on next day, increase end day
+  if(Kbegin[shift] > Kend[shift]) eventData.endTime.date = parseInt(eventData.endTime.date) + 1;
+  
+  eventData.endTime.hour = Math.floor(Kend[shift]/100);
+  eventData.endTime.minute = Kend[shift]%100;
+  
+  // Set car
+  eventData.details = "Planmäßiges Fahrzeug:" + Cars[shift];
+  
+  
+  google.calendar.composeEvent(eventData);
+}
+
+// This is a setter function for the selectedShiftType 
+function setShiftType(s)
+{
+  if(s > -1 && s < 3)
+  {
+    selectedShiftType = s;
+  }
+  setShifts();
+}
+</script>
+
+<center>
+<form name="main">
+<select name="day" onchange="setShifts()">
+	
+</select>
+
+<select name="month" onchange="setDays(this.value)">
+<option value="0">Januar</option>
+<option value="1">Februar</option>
+<option value="2">März</option>
+<option value="3">April</option>
+<option value="4">Mai</option>
+<option value="5">Juni</option>
+<option value="6">Juli</option>
+<option value="7">August</option>
+<option value="8">September</option>
+<option value="9">Oktober</option>
+<option value="10">November</option>
+<option value="11">Dezember</option>
+</select>
+
+<select name="year">
+
+</select>
+<br />
+<font style="font-size: small">Feiertag<input type="checkbox" name="holiday" onclick="setShifts()"/></font>
+<br />
+<input type="radio" name="shift_type" value="K" onclick="setShiftType(0)" checked/> KTW<br/>
+<input type="radio" name="shift_type" value="R" onclick="setShiftType(1)"/> RTW<br/>
+<input type="radio" name="shift_type" value="B" onClick="setShiftType(2)"/> Baby NAW<br/>
+<select name="s">
+  <!-- Functions set shift abbreviations here -->
+</select>
+<br>
+</form>
+<button name="Eintragen" onclick="registerShift()">Eintragen</button>
+</center>
+</body>
+</html>
+]]></Content>
+</Module>
