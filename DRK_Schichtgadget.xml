@@ -12,163 +12,54 @@
 // This variable holds the currently selected shifttype (0 for KTW, 1 for RTW)
 var selectedShiftType = 0;
 
-// The following arrays hold the begin and end times for all shifts
-// e.g. since K10 begins at 10 o'clock Kbegin[10] contains 1000
-// cells with no corresponding shift symbol contain -1 and yield invalid shift symbols e.g. Kbegin[0] because there is no K0
-var Kbegin = new Array(-1,
-    600, // K01
-    615, // K02
-    630, // K03
-    800, // K04
-    800, // K05
-    830, // K06
-    900, // K07
-    930, // K08
-    930, // K09
-    1000, // K10
-    1000, // K11
-    1000, // K12
-    1030, // K13
-    1230, // K14
-    1600, // K15
-    2200, // K16
-    1700); // K17
+var KTWshifts = { // Schicht
+    "K01": {"code":"K01", "begin":600, "end":1400, "car":"1/85-10", "daytype":0},
+    "K02": {"code":"K02", "begin":615, "end":1445, "car":"1/85-09", "daytype":0},
+    "K03": {"code":"K03", "begin":630, "end":1500, "car":"1/85-11", "daytype":0},
+    "K04": {"code":"K04", "begin":800, "end":1400, "car":"1/85-05", "daytype":0},
+    "K05": {"code":"K05", "begin":800, "end":1700, "car":"1/85-06", "daytype":0},
+    "K06": {"code":"K06", "begin":830, "end":1700, "car":"1/85-07", "daytype":0},
+    "K07": {"code":"K07", "begin":900, "end":1700, "car":"1/85-02", "daytype":0},
+    "K08": {"code":"K08", "begin":930, "end":1800, "car":"1/85-14", "daytype":0},
+    "K09": {"code":"K09", "begin":930, "end":1900, "car":"1/85-03", "daytype":0},
+    "K10": {"code":"K10", "begin":1000, "end":1600, "car":"1/85-04", "daytype":0},
+    "K11": {"code":"K11", "begin":1000, "end":1900, "car":"1/85-13", "daytype":0},
+    "K12": {"code":"K12", "begin":1000, "end":1930, "car":"1/85-08", "daytype":0},
+    "K13": {"code":"K13", "begin":1030, "end":2000, "car":"1/85-15", "daytype":0},
+    "K14": {"code":"K14", "begin":1230, "end":2100, "car":"1/85-12", "daytype":0},
+    "K15": {"code":"K15", "begin":1600, "end":0, "car":"1/85-10", "daytype":0},
+    "K17": {"code":"K17", "begin":1700, "end":100, "car":"1/85-11", "daytype":0},
 
-// Weekendshifts
-Kbegin[50] = 600;
-Kbegin[51] = 630;
-Kbegin[52] = 700;
-Kbegin[53] = 1000;
-Kbegin[55] = 1600;
-Kbegin[56] = 1700;
-Kbegin[60] = 700;
-Kbegin[61] = 1100;
-Kbegin[65] = 1600;
-Kbegin[66] = 1600;
+    "K50": {"code":"K50", "begin":600, "end":1430, "car":"1/85-04", "daytype":1},
+    "K51": {"code":"K51", "begin":630, "end":1430, "car":"1/85-05", "daytype":1},
+    "K52": {"code":"K52", "begin":700, "end":1300, "car":"Zusatz", "daytype":1},
+    "K53": {"code":"K53", "begin":1000, "end":1930, "car":"1/85-08", "daytype":1},
+    "K55": {"code":"K55", "begin":1600, "end":100, "car":"1/85-07", "daytype":1},
+    "K56": {"code":"K56", "begin":1700, "end":200, "car":"1/85-14", "daytype":1},
 
-// RTW shifts
-Kbegin[100] = 600;
-Kbegin[101] = 615;
-Kbegin[102] = 630;
-Kbegin[103] = 1300;
-Kbegin[104] = 1315;
-Kbegin[105] = 1330;
-Kbegin[106] = 2100;
-Kbegin[106] = 2115;
-Kbegin[108] = 2130;
+    "K60": {"code":"K60", "begin":700, "end":1530, "car":"1/85-05", "daytype":2},
+    "K61": {"code":"K61", "begin":1100, "end":2000, "car":"1/85-04", "daytype":2},
+    "K65": {"code":"K65", "begin":1600, "end":2200, "car":"1/85-08", "daytype":2},
+    "K66": {"code":"K66", "begin":1600, "end":0, "car":"1/85-07", "daytype":2},
+}
 
-// Außenwachen
-Kbegin[150] = 700;
-Kbegin[151] = 1800;
-Kbegin[152] = 700;
-Kbegin[153] = 1800;
+var RTWshifts = {
+    "R1F": {"code":"R1F", "begin":600, "end":1300, "car":"1/83-01", "daytype":0},
+    "R2F": {"code":"R2F", "begin":615, "end":1315, "car":"1/83-02", "daytype":0},
+    "R3F": {"code":"R3F", "begin":630, "end":1330, "car":"1/83-03", "daytype":0},
+    "R1S": {"code":"R1S", "begin":1300, "end":2100, "car":"1/83-01", "daytype":0},
+    "R2S": {"code":"R2S", "begin":1315, "end":2115, "car":"1/83-02", "daytype":0},
+    "R3S": {"code":"R3S", "begin":1330, "end":2130, "car":"1/83-03", "daytype":0},
+    "R1N": {"code":"R1N", "begin":1300, "end":600, "car":"1/83-01", "daytype":0},
+    "R2N": {"code":"R2N", "begin":1315, "end":615, "car":"1/83-02", "daytype":0},
+    "R3N": {"code":"R3N", "begin":1330, "end":630, "car":"1/83-03", "daytype":0},
 
+    "BRT": {"code":"BRT", "begin":700, "end":1800, "car":"3/83-01", "daytype":0},
+    "BRN": {"code":"BRN", "begin":1800, "end":700, "car":"3/83-01", "daytype":0},
 
-var Kend = new Array(-1,
-    1400, // K01
-    1445, // K02
-    1500, // K03
-    1400, // K04
-    1700, // K05
-    1700, // K06
-    1700, // K07
-    1800, // K08
-    1900, // K09
-    1600, // K10
-    1900, // K11
-    1930, // K12
-    2000, // K13
-    2100, // K14
-    0,    // K15
-    700,  // K16
-    100); // K17
-Kend[50] = 1430;
-Kend[51] = 1430;
-Kend[52] = 1300;
-Kend[53] = 1930;
-Kend[55] = 100;
-Kend[56] = 200;
-Kend[60] = 1530;
-Kend[61] = 2000;
-Kend[65] = 2200;
-Kend[66] = 0;
-
-// RTW
-Kend[100] = 1300;
-Kend[101] = 1315;
-Kend[102] = 1330;
-Kend[103] = 2100;
-Kend[104] = 2115;
-Kend[105] = 2130;
-Kend[106] = 600;
-Kend[107] = 615;
-Kend[108] = 630;
-
-Kend[150] = 1800;
-Kend[151] = 700;
-Kend[152] = 1800;
-Kend[153] =  700;
-
-// This Array holds the assigned car for each shift
-var Cars = new Array("", "1/85-10", "1/85-09", "1/85-11", "1/85-05", "1/85-06", "1/85-07", "1/85-14 (Zweiter Auswärts)", "1/85-17", "1/85-12", "1/85-04",
-			"1/85-13", "1/85-08 (Erster Auswärts)", "1/85-015", "1/85-16", "1/85-10", "-", "1/85-11");
-Cars[50] = "1/85-04";
-Cars[51] = "1/85-05";
-Cars[52] = "x";
-Cars[53] = "1/85-08";
-Cars[55] = "1/85-07";
-Cars[56] = "1/85-17";
-Cars[60] = "1/85-05";
-Cars[61] = "1/85-04";
-Cars[65] = "1/85-09";
-Cars[66] = "1/85-07";
-// RTW
-Cars[100] = "1/83-01";
-Cars[101] = "1/83-02";
-Cars[102] = "1/83-03";
-
-Cars[103] = "1/83-01";
-Cars[104] = "1/83-02";
-Cars[105] = "1/83-03";
-
-Cars[106] = "1/83-01";
-Cars[107] = "1/83-02";
-Cars[108] = "1/83-03";
-
-Cars[150] = "10/83-01";
-Cars[151] = "10/83-01";
-Cars[152] = "3/83-01";
-Cars[153] = "3/83-01";
-
-// This Array holds the shift descriptions
-var Descr = new Array("", "K01", "K02", "K03", "K04", "K05", "K06", "K07", "K08", "K09", "K10", "K11",
-			"K12", "K13", "K14", "K15", "K16", "K17");
-Descr[50] = "K50";
-Descr[51] = "K51";
-Descr[52] = "K52";
-Descr[53] = "K53";
-Descr[55] = "K55";
-Descr[56] = "K56";
-Descr[60] = "K60";
-Descr[61] = "K61";
-Descr[65] = "K65";
-Descr[66] = "K66";
-// RTW
-Descr[100] = "R1F";
-Descr[101] = "R2F";
-Descr[102] = "R3F";
-Descr[103] = "R1S";
-Descr[104] = "R2S";
-Descr[105] = "R3S";
-Descr[106] = "R1N";
-Descr[107] = "R2N";
-Descr[108] = "R3N";
-
-Descr[150] = "KiZa Tag";
-Descr[151] = "KiZa Nacht";
-Descr[152] = "Breisach Tag";
-Descr[153] = "Breisach Nacht";
-
+    "KT": {"code":"KT", "begin":700, "end":1800, "car":"10/83-01", "daytype":0},
+    "KN": {"code":"KN", "begin":1800, "end":700, "car":"10/83-01", "daytype":0},
+}
 
 // Sets the shift to the dropdown menu depending on day and type
 function setShifts()
@@ -187,54 +78,24 @@ function setShifts()
 function setRTWShifts(day)
 {
   var counter = 0;
-  
-	document.main.s.options[counter++]=new Option("R1F", 100);
-	document.main.s.options[counter++]=new Option("R2F", 101);
-	document.main.s.options[counter++]=new Option("R3F", 102);
-	document.main.s.options[counter++]=new Option("R1S", 103);
-	document.main.s.options[counter++]=new Option("R2S", 104);
-	document.main.s.options[counter++]=new Option("R3S", 105);
-	document.main.s.options[counter++]=new Option("R1N", 106);
-	document.main.s.options[counter++]=new Option("R2N", 107);
-	document.main.s.options[counter++]=new Option("R3N", 108);
-  document.main.s.options[counter++]=new Option("KT", 150);
-  document.main.s.options[counter++]=new Option("KN", 151);
-  document.main.s.options[counter++]=new Option("BRT", 152);
-  document.main.s.options[counter++]=new Option("BRN", 153);
+
+  for (var x in RTWshifts)
+  {
+    document.main.s.options[counter++]=new Option(RTWshifts[x].code, x);
+  }
 }
 
 // Sets the KTW shifts
 function setKTWShifts(day){
   var counter = 0;
   // Workday Shifts
-  if((day > 0 && day < 6) && !document.main.holiday.checked)
+  var chosen_day_type = 0;
+  if (day == 6 || document.main.holiday.checked) chosen_day_type = 1;
+  if (day == 0) chosen_day_type = 2;
+  for (var x in KTWshifts)
   {
-    for(i = 1; i < 18; i++)
-    {
-      var descr = "K";
-      if(i < 10) descr = "K0";
-      descr += i;
-      document.main.s.options[counter++]=new Option(descr, i);
-    }
-  }
-  // Saturday Shifts
-  if(day == 6)
-  { 
-    document.main.s.options[counter++]=new Option("K50", "50");
-    document.main.s.options[counter++]=new Option("K51", "51");
-    document.main.s.options[counter++]=new Option("K53", "53");
-    document.main.s.options[counter++]=new Option("K55", "55");
-    document.main.s.options[counter++]=new Option("K56", "56");
-    // Return so the Saturdays which are Holidays do not get the 6x shifts
-    return;
-  }
-  // Sunday/Holiday 
-  if(day == 0 || document.main.holiday.checked)
-  {
-    document.main.s.options[counter++]=new Option("K60", "60");
-    document.main.s.options[counter++]=new Option("K61", "61");
-    document.main.s.options[counter++]=new Option("K65", "65");
-    document.main.s.options[counter++]=new Option("K66", "66");
+    if (KTWshifts[x].daytype != chosen_day_type) continue;
+    document.main.s.options[counter++]=new Option(KTWshifts[x].code, x);
   }
 }
 
@@ -284,23 +145,22 @@ function getDays(month)
 
 function registerShift()
 {
-    var shift = document.main.s.options[document.main.s.selectedIndex].value;
-    var sName;
+    var selected_shift = document.main.s.options[document.main.s.selectedIndex].value;
+
     switch(selectedShiftType)
     {
       case 0:
+        selected_shift = KTWshifts[selected_shift];
         sName = "KTW ";
         break;
       case 1:
+        selected_shift = RTWshifts[selected_shift];
         sName = "RTW ";
-        break;
-      case 2:
-        sName = "Baby NAW ";
         break;
       default:
         break;
     }
-    sName += Descr[shift];
+    sName += selected_shift.code;
     var eventData = {
     title: 'name',
     details: 'default',
@@ -318,20 +178,20 @@ function registerShift()
   eventData.startTime.month = document.main.month.selectedIndex + 1;
   eventData.startTime.date = document.main.day.options[document.main.day.selectedIndex].value;
   
-  eventData.startTime.hour = Math.floor(Kbegin[shift]/100);
-  eventData.startTime.minute = Kbegin[shift]%100;
+  eventData.startTime.hour = Math.floor(selected_shift.begin/100);
+  eventData.startTime.minute = selected_shift.begin%100;
   
   eventData.endTime.year = document.main.year.options[document.main.year.selectedIndex].value;
   eventData.endTime.month = document.main.month.selectedIndex + 1;
   eventData.endTime.date = document.main.day.options[document.main.day.selectedIndex].value;
   // If shift ends on next day, increase end day
-  if(Kbegin[shift] > Kend[shift]) eventData.endTime.date = parseInt(eventData.endTime.date) + 1;
+  if(selected_shift.begin > selected_shift.end) eventData.endTime.date = parseInt(eventData.endTime.date) + 1;
   
-  eventData.endTime.hour = Math.floor(Kend[shift]/100);
-  eventData.endTime.minute = Kend[shift]%100;
+  eventData.endTime.hour = Math.floor(selected_shift.end/100);
+  eventData.endTime.minute = selected_shift.end%100;
   
   // Set car
-  eventData.details = "Planmäßiges Fahrzeug:" + Cars[shift];
+  eventData.details = "Planmäßiges Fahrzeug: " + selected_shift.car;
   
   
   google.calendar.composeEvent(eventData);
