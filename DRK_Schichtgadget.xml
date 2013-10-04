@@ -242,6 +242,10 @@ function setShiftType(s)
 <br>
 </form>
 <button name="Eintragen" onclick="registerShift()">Eintragen</button>
+<br/>
+<small>
+    Version 04.10.2013
+</small>
 </center>
 </body>
 </html>
