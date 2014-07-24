@@ -17,18 +17,18 @@ var KTWshifts = { // Schicht
     "K02": {"code":"K02", "begin":615, "end":1445, "car":"1/85-09", "daytype":0},
     "K03": {"code":"K03", "begin":630, "end":1500, "car":"1/85-11", "daytype":0},
     "K04": {"code":"K04", "begin":800, "end":1400, "car":"1/85-02", "daytype":0},
-    "K05": {"code":"K05", "begin":800, "end":1700, "car":"1/85-03", "daytype":0},
+    "K05": {"code":"K05", "begin":800, "end":1600, "car":"1/85-03", "daytype":0},
     "K06": {"code":"K06", "begin":830, "end":1700, "car":"1/85-07", "daytype":0},
-    "K07": {"code":"K07", "begin":900, "end":1700, "car":"1/85-01", "daytype":0},
+    "K07": {"code":"K07", "begin":800, "end":1600, "car":"1/85-01", "daytype":0},
     "K08": {"code":"K08", "begin":930, "end":1800, "car":"1/85-14", "daytype":0},
     "K09": {"code":"K09", "begin":930, "end":1900, "car":"1/85-17", "daytype":0},
     "K10": {"code":"K10", "begin":1000, "end":1600, "car":"1/85-04", "daytype":0},
-    "K11": {"code":"K11", "begin":1000, "end":1900, "car":"1/85-13", "daytype":0},
+    "K11": {"code":"K11", "begin":900, "end":1700, "car":"1/85-13", "daytype":0},
     "K12": {"code":"K12", "begin":1000, "end":1930, "car":"1/85-08", "daytype":0},
-    "K13": {"code":"K13", "begin":1030, "end":2000, "car":"1/85-15", "daytype":0},
+    "K13": {"code":"K13", "begin":930, "end":1730, "car":"1/85-15", "daytype":0},
     "K14": {"code":"K14", "begin":1230, "end":2100, "car":"1/85-12", "daytype":0},
     "K15": {"code":"K15", "begin":1600, "end":0, "car":"1/85-10", "daytype":0},
-    "K17": {"code":"K17", "begin":1800, "end":200, "car":"1/85-11", "daytype":0},
+    "K17": {"code":"K17", "begin":1700, "end":100, "car":"1/85-11", "daytype":0},
 
     "K50": {"code":"K50", "begin":600, "end":1430, "car":"1/85-04", "daytype":1},
     "K51": {"code":"K51", "begin":630, "end":1430, "car":"1/85-02", "daytype":1},
@@ -66,7 +66,7 @@ function setShifts()
   var d = new Date();
   d.setDate(document.main.day.options[document.main.day.selectedIndex].value);
   d.setMonth(document.main.month.options[document.main.month.selectedIndex].value);
-  d.setFullYear(document.main.year.options[document.main.year.selectedIndex].value);    
+  d.setFullYear(document.main.year.options[document.main.year.selectedIndex].value);
   document.main.s.options.length=0;
   var day = d.getDay();
   if(selectedShiftType == 0) setKTWShifts(day);
@@ -112,33 +112,33 @@ function initialize()
   var d = new Date();
   var year = d.getFullYear();
   document.main.year.options.length=0;
-  
+
   // makes the current and the following year selectable
   document.main.year.options[0] = new Option(year, year);
   document.main.year.options[1] = new Option(year+1, year+1);
-  
+
   document.main.month.selectedIndex = d.getMonth();
   setDays(d.getMonth());
   document.main.day.selectedIndex = d.getDate()-1;
   setShifts();
-  
+
 }
 
 function getDays(month)
 {
   //TODO: LEAP YEARS
-  
+
   if(month == 0) return 31;
   if(month == 1) return 28;
   if(month == 2) return 31;
   if(month == 3) return 30;
-  if(month == 4) return 31;  
-  if(month == 5) return 30;  
-  if(month == 6) return 31;  
-  if(month == 7) return 31;  
-  if(month == 8) return 30;  
-  if(month == 9) return 31;  
-  if(month == 10) return 30;  
+  if(month == 4) return 31;
+  if(month == 5) return 30;
+  if(month == 6) return 31;
+  if(month == 7) return 31;
+  if(month == 8) return 30;
+  if(month == 9) return 31;
+  if(month == 10) return 30;
   if(month == 11) return 31;
 }
 
@@ -171,32 +171,32 @@ function registerShift()
     endTime: {year: 2009, month: 12, date: 26, hour: 14, minute: 0, second: 0},
   };
   eventData.title = sName;
-  
+
   // Set begin and end time
   eventData.startTime.year = document.main.year.options[document.main.year.selectedIndex].value;
   eventData.startTime.month = document.main.month.selectedIndex + 1;
   eventData.startTime.date = document.main.day.options[document.main.day.selectedIndex].value;
-  
+
   eventData.startTime.hour = Math.floor(selected_shift.begin/100);
   eventData.startTime.minute = selected_shift.begin%100;
-  
+
   eventData.endTime.year = document.main.year.options[document.main.year.selectedIndex].value;
   eventData.endTime.month = document.main.month.selectedIndex + 1;
   eventData.endTime.date = document.main.day.options[document.main.day.selectedIndex].value;
   // If shift ends on next day, increase end day
   if(selected_shift.begin > selected_shift.end) eventData.endTime.date = parseInt(eventData.endTime.date) + 1;
-  
+
   eventData.endTime.hour = Math.floor(selected_shift.end/100);
   eventData.endTime.minute = selected_shift.end%100;
-  
+
   // Set car
   eventData.details = "Planmäßiges Fahrzeug: " + selected_shift.car;
-  
-  
+
+
   google.calendar.composeEvent(eventData);
 }
 
-// This is a setter function for the selectedShiftType 
+// This is a setter function for the selectedShiftType
 function setShiftType(s)
 {
   if(s > -1 && s < 3)
@@ -210,7 +210,7 @@ function setShiftType(s)
 <center>
 <form name="main">
 <select name="day" onchange="setShifts()">
-	
+
 </select>
 
 <select name="month" onchange="setDays(this.value)">
@@ -244,7 +244,7 @@ function setShiftType(s)
 <button name="Eintragen" onclick="registerShift()">Eintragen</button>
 <br/>
 <small>
-    Version 04.10.2013
+    Version 24.07.2014
 </small>
 </center>
 </body>
