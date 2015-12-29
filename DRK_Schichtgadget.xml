@@ -43,21 +43,23 @@ var KTWshifts = { // Schicht
 }
 
 var RTWshifts = {
-    "R1F": {"code":"R1F", "begin":600, "end":1300, "car":"1/83-01", "daytype":0},
-    "R2F": {"code":"R2F", "begin":615, "end":1315, "car":"1/83-02", "daytype":0},
-    "R3F": {"code":"R3F", "begin":630, "end":1330, "car":"1/83-03", "daytype":0},
-    "R1S": {"code":"R1S", "begin":1300, "end":2100, "car":"1/83-01", "daytype":0},
-    "R2S": {"code":"R2S", "begin":1315, "end":2115, "car":"1/83-02", "daytype":0},
-    "R3S": {"code":"R3S", "begin":1330, "end":2130, "car":"1/83-03", "daytype":0},
-    "R1N": {"code":"R1N", "begin":1300, "end":600, "car":"1/83-01", "daytype":0},
-    "R2N": {"code":"R2N", "begin":1315, "end":615, "car":"1/83-02", "daytype":0},
-    "R3N": {"code":"R3N", "begin":1330, "end":630, "car":"1/83-03", "daytype":0},
+    "RF1": {"code":"RF1", "begin":600, "end":1400, "car":"1/83-01", "daytype":0},
+    "RF2": {"code":"RF2", "begin":600, "end":1400, "car":"1/83-02", "daytype":0},
+    "RF3": {"code":"RF3", "begin":600, "end":1400, "car":"1/83-03", "daytype":0},
 
-    "BRT": {"code":"BRT", "begin":700, "end":1800, "car":"3/83-01", "daytype":0},
-    "BRN": {"code":"BRN", "begin":1800, "end":700, "car":"3/83-01", "daytype":0},
+    "RS1": {"code":"RS1", "begin":1400, "end":2200, "car":"1/83-01", "daytype":0},
+    "RS2": {"code":"RS2", "begin":1400, "end":2200, "car":"1/83-02", "daytype":0},
+    "RS3": {"code":"RS3", "begin":1400, "end":2200, "car":"1/83-03", "daytype":0},
 
-    "KT": {"code":"KT", "begin":700, "end":1800, "car":"10/83-01", "daytype":0},
-    "KN": {"code":"KN", "begin":1800, "end":700, "car":"10/83-01", "daytype":0},
+    "RN1": {"code":"RN1", "begin":2200, "end":600, "car":"1/83-01", "daytype":0},
+    "RN2": {"code":"RN2", "begin":2200, "end":600, "car":"1/83-02", "daytype":0},
+    "RN3": {"code":"RN3", "begin":2200, "end":600, "car":"1/83-03", "daytype":0},
+
+    "BRT": {"code":"BRT", "begin":700, "end":1900, "car":"3/83-01", "daytype":0},
+    "BRN": {"code":"BRN", "begin":1900, "end":700, "car":"3/83-01", "daytype":0},
+
+    "KT": {"code":"KT", "begin":630, "end":1830, "car":"10/83-01", "daytype":0},
+    "KN": {"code":"KN", "begin":1830, "end":630, "car":"10/83-01", "daytype":0},
 }
 
 // Sets the shift to the dropdown menu depending on day and type
