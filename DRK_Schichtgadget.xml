@@ -128,20 +128,24 @@ function initialize()
 
 function getDays(month)
 {
-  //TODO: LEAP YEARS
+    // To find out if a leap year was selected, we create a new date object, set the date to 29th of
+    // February and see if the month is still February. For non leap years we will wind up with 1st of March
+    var currentYear = new Date(document.main.year.options[document.main.year.selectedIndex].value, 1, 29);
+    var leapYear = (currentYear.getMonth() == 1);
 
-  if(month == 0) return 31;
-  if(month == 1) return 28;
-  if(month == 2) return 31;
-  if(month == 3) return 30;
-  if(month == 4) return 31;
-  if(month == 5) return 30;
-  if(month == 6) return 31;
-  if(month == 7) return 31;
-  if(month == 8) return 30;
-  if(month == 9) return 31;
-  if(month == 10) return 30;
-  if(month == 11) return 31;
+    if(month == 0) return 31;
+    if(month == 1 && leapYear) return 29;
+    if(month == 1 && !leapYear) return 28;
+    if(month == 2) return 31;
+    if(month == 3) return 30;
+    if(month == 4) return 31;
+    if(month == 5) return 30;
+    if(month == 6) return 31;
+    if(month == 7) return 31;
+    if(month == 8) return 30;
+    if(month == 9) return 31;
+    if(month == 10) return 30;
+    if(month == 11) return 31;
 }
 
 function registerShift()
