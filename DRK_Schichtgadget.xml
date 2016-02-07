@@ -179,7 +179,7 @@ function registerShift()
     // be on the day after the start time.
     endTime: {year: 2009, month: 12, date: 26, hour: 14, minute: 0, second: 0},
   };
-  eventData.title = sName;
+  eventData.title = "🚑 " + sName;
 
   // Set begin and end time
   eventData.startTime.year = document.main.year.options[document.main.year.selectedIndex].value;
@@ -253,7 +253,7 @@ function setShiftType(s)
 <button name="Eintragen" onclick="registerShift()">Eintragen</button>
 <br/>
 <small>
-    Version 29.12.2015
+    Version 07.02.2016
 </small>
 </center>
 </body>
